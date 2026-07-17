@@ -1,5 +1,7 @@
 package factory;
 
+import java.nio.file.Paths;
+
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
@@ -44,7 +46,13 @@ public class PlaywrightFactory {
                 break;
         }
 
-        context = browser.newContext();
+        context = browser.newContext(
+
+        	    new Browser.NewContextOptions()
+
+        	        .setRecordVideoDir(Paths.get("videos"))
+
+        	        .setRecordVideoSize(1280,720));
 
         page = context.newPage();
 

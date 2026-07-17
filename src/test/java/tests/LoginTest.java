@@ -20,6 +20,7 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(
                 loginPage.isDashboardDisplayed(),
                 "Dashboard is not displayed after login.");
+        Assert.assertTrue(false);
         
         Assert.assertTrue(false, "Intentional failure");
     }

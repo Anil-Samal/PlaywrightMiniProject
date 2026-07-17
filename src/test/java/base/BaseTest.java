@@ -1,7 +1,10 @@
 package base;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import org.apache.logging.log4j.Logger;
 import org.testng.ITestResult;
@@ -61,31 +64,41 @@ public class BaseTest {
     @AfterMethod(alwaysRun = true)
     public void tearDown(ITestResult result) {
 
+        Path video = null;
+
         try {
-            if (result.getStatus() == ITestResult.FAILURE) {
+            if(page.video()!=null){
 
-                new File("traces").mkdirs();
+                video = page.video().path();
+            }
 
-                factory.getContext().tracing().stop(
-                    new Tracing.StopOptions()
-                        .setPath(Paths.get(
-                            "traces/"
+        } catch(Exception e){
+
+            log.warn("Video not available.");
+        }
+        factory.closeBrowser();
+
+        if(result.getStatus()==ITestResult.FAILURE && video!=null){
+
+            try{
+
+                Files.createDirectories(Paths.get("videos"));
+
+                Files.move(
+                        video,
+                        Paths.get(
+                            "videos/"
                             + result.getMethod().getMethodName()
                             + "_"
                             + System.currentTimeMillis()
-                            + ".zip"))
-                );
+                            + ".webm"),
+                        StandardCopyOption.REPLACE_EXISTING);
 
-            } else {
+            }catch(Exception e){
 
-                factory.getContext().tracing().stop();
+                log.error("Unable to save video.",e);
             }
 
-        } finally {
-
-            if (factory != null) {
-                factory.closeBrowser();
-            }
         }
     }
 }
