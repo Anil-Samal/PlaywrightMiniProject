@@ -21,6 +21,8 @@ public class BaseTest {
     protected ConfigReader config;
     
     protected Logger log = LoggerUtil.getLogger(getClass());
+    
+    protected static Page currentPage;
 
     @BeforeMethod
     public void setUp() {
@@ -33,15 +35,18 @@ public class BaseTest {
 
         factory = new PlaywrightFactory();
 
-        page = factory.initBrowser(
-                config.getBrowser(),
-                config.isHeadless());
+        page = factory.initBrowser(config.getBrowser(), config.isHeadless());
+        currentPage = page;
 
         log.info("Navigating to URL: {}", config.getUrl());
 
         page.navigate(config.getUrl());
 
         log.info("Application loaded successfully");
+    }
+    
+    public static Page getPage() {
+        return currentPage;
     }
 
     @AfterMethod(alwaysRun = true)

@@ -1,28 +1,38 @@
 package utils;
 
-
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.microsoft.playwright.Page;
 
 public class ScreenshotUtil {
 
-//    public static void captureScreenshot(Page page, String fileName) {
-//
-//        page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshots/" + fileName + ".png")).setFullPage(true));
+    public static String captureScreenshot(Page page, String testName) {
 
-	    public static void captureScreenshot(Page page, String testName) {
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+                .format(new Date());
 
-	        String timeStamp = LocalDateTime.now()
-	                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String folder = "screenshots";
 
-	        String fileName = testName + "_" + timeStamp + ".png";
+        new File(folder).mkdirs();
 
-	        page.screenshot(new Page.ScreenshotOptions()
-	                .setPath(Paths.get("screenshots/" + fileName))
-	                .setFullPage(true));
-	    }
+        String path = folder + File.separator +
+                testName + "_" + timestamp + ".png";
 
+        try {
+
+            page.screenshot(
+                    new Page.ScreenshotOptions()
+                            .setPath(java.nio.file.Paths.get(path))
+                            .setFullPage(true));
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        return path;
+    }
 }
