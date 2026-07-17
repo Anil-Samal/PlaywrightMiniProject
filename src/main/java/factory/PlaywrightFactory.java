@@ -10,10 +10,22 @@ import com.microsoft.playwright.Playwright;
 
 public class PlaywrightFactory {
 
-    private Playwright playwright;
-    private Browser browser;
-    private BrowserContext context;
-    private Page page;
+//    private Playwright playwright;
+//    private Browser browser;
+//    private BrowserContext context;
+//    private Page page;
+	
+	private static ThreadLocal<Playwright> playwright =
+	        new ThreadLocal<>();
+
+	private static ThreadLocal<Browser> browser =
+	        new ThreadLocal<>();
+
+	private static ThreadLocal<BrowserContext> context =
+	        new ThreadLocal<>();
+
+	private static ThreadLocal<Page> page =
+	        new ThreadLocal<>();
 
     /**
      * Initializes Playwright and launches the requested browser.
@@ -24,8 +36,9 @@ public class PlaywrightFactory {
      */
     public Page initBrowser(String browserName, boolean headless) {
 
-        playwright = Playwright.create();
-
+        //playwright = Playwright.create();
+    	playwright.set(Playwright.create());
+    	
         BrowserType.LaunchOptions options =
                 new BrowserType.LaunchOptions()
                         .setHeadless(headless);
@@ -33,46 +46,62 @@ public class PlaywrightFactory {
         switch (browserName.toLowerCase()) {
 
             case "firefox":
-                browser = playwright.firefox().launch(options);
+               // browser = playwright.firefox().launch(options);
+            	browser.set(
+            		    playwright.get()
+            		              .firefox()
+            		              .launch(options));
                 break;
 
             case "webkit":
-                browser = playwright.webkit().launch(options);
+                //browser = playwright.webkit().launch(options);
+            	browser.set(
+            		    playwright.get()
+            		              .webkit()
+            		              .launch(options));
                 break;
 
             case "chromium":
             default:
-                browser = playwright.chromium().launch(options);
+                //browser = playwright.chromium().launch(options);
+                browser.set(
+                	    playwright.get()
+                	              .chromium()
+                	              .launch(options));
                 break;
         }
 
-        context = browser.newContext(
+        context.set(browser.get().newContext(
 
         	    new Browser.NewContextOptions()
 
         	        .setRecordVideoDir(Paths.get("videos"))
 
-        	        .setRecordVideoSize(1280,720));
+        	        .setRecordVideoSize(1280,720)));
 
-        page = context.newPage();
+        page.set(
+        	    context.get().newPage()
+        	);
 
-        return page;
+        return page.get();
     }
 
     public Page getPage() {
-        return page;
+
+        return page.get();
+
     }
 
     public BrowserContext getContext() {
-        return context;
+        return context.get();
     }
 
     public Browser getBrowser() {
-        return browser;
+        return browser.get();
     }
 
     public Playwright getPlaywright() {
-        return playwright;
+        return playwright.get();
     }
 
     /**
@@ -80,13 +109,28 @@ public class PlaywrightFactory {
      */
     public void closeBrowser() {
 
-        if (context != null)
-            context.close();
+    	if(context.get()!=null){
 
-        if (browser != null)
-            browser.close();
+    	    context.get().close();
 
-        if (playwright != null)
-            playwright.close();
+    	}
+
+    	if(browser.get()!=null){
+
+    	    browser.get().close();
+
+    	}
+
+    	if(playwright.get()!=null){
+
+    	    playwright.get().close();
+    	}
+    	page.remove();
+
+    	context.remove();
+
+    	browser.remove();
+
+    	playwright.remove();
     }
 }

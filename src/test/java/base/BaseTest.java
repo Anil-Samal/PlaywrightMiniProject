@@ -1,20 +1,13 @@
 package base;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-
 import org.apache.logging.log4j.Logger;
-import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Tracing;
 
-import factory.PlaywrightFactory;
+import driver.BrowserFactory;
+import driver.DriverManager;
 import utils.ConfigReader;
 import utils.LoggerUtil;
 
@@ -22,83 +15,41 @@ public class BaseTest {
 
     protected Page page;
 
-    protected PlaywrightFactory factory;
-
     protected ConfigReader config;
-    
-    protected Logger log = LoggerUtil.getLogger(getClass());
-    
-    protected static Page currentPage;
+
+    protected Logger log =
+            LoggerUtil.getLogger(getClass());
 
     @BeforeMethod
-    public void setUp() {
-
-        log.info("Loading configuration");
+    public void setup() {
 
         config = new ConfigReader();
 
-        log.info("Launching browser: {}", config.getBrowser());
+        BrowserFactory browserFactory =
+                new BrowserFactory();
 
-        factory = new PlaywrightFactory();
-
-        page = factory.initBrowser(config.getBrowser(), config.isHeadless());
-        factory.getContext().tracing().start(
-        	    new Tracing.StartOptions()
-        	        .setScreenshots(true)
-        	        .setSnapshots(true)
-        	        .setSources(true)
-        	);
-        currentPage = page;
-
-        log.info("Navigating to URL: {}", config.getUrl());
+        page = browserFactory.createBrowser(
+                config.getBrowser(),
+                config.isHeadless());
 
         page.navigate(config.getUrl());
-
-        log.info("Application loaded successfully");
-    }
-    
-    public static Page getPage() {
-        return currentPage;
     }
 
     @AfterMethod(alwaysRun = true)
-    public void tearDown(ITestResult result) {
+    public void tearDown() {
 
-        Path video = null;
-
-        try {
-            if(page.video()!=null){
-
-                video = page.video().path();
-            }
-
-        } catch(Exception e){
-
-            log.warn("Video not available.");
+        if (DriverManager.getContext() != null) {
+            DriverManager.getContext().close();
         }
-        factory.closeBrowser();
 
-        if(result.getStatus()==ITestResult.FAILURE && video!=null){
-
-            try{
-
-                Files.createDirectories(Paths.get("videos"));
-
-                Files.move(
-                        video,
-                        Paths.get(
-                            "videos/"
-                            + result.getMethod().getMethodName()
-                            + "_"
-                            + System.currentTimeMillis()
-                            + ".webm"),
-                        StandardCopyOption.REPLACE_EXISTING);
-
-            }catch(Exception e){
-
-                log.error("Unable to save video.",e);
-            }
-
+        if (DriverManager.getBrowser() != null) {
+            DriverManager.getBrowser().close();
         }
+
+        if (DriverManager.getPlaywright() != null) {
+            DriverManager.getPlaywright().close();
+        }
+
+        DriverManager.unload();
     }
 }

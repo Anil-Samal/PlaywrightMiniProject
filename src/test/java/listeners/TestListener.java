@@ -1,5 +1,7 @@
 package listeners;
 
+import driver.DriverManager;
+
 import org.apache.logging.log4j.Logger;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
@@ -34,7 +36,7 @@ public class TestListener implements ITestListener {
         log.error("Test Failed : {}", result.getMethod().getMethodName());
 
         String path = ScreenshotUtil.captureScreenshot(
-                BaseTest.getPage(),
+                DriverManager.getPage(),
                 result.getMethod().getMethodName());
 
         log.error("Screenshot saved at : {}", path);
