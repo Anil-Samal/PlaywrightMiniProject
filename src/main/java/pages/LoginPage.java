@@ -1,35 +1,59 @@
 package pages;
 
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-public class LoginPage {
+import base.BasePage;
 
-	private final Page page;
-    private final Locator username;
-    private final Locator password;
-    private final Locator loginBtn;
+public class LoginPage extends BasePage {
 
-	public LoginPage(Page page) {
-		this.page = page;
+    public LoginPage(Page page) {
+        super(page);
+    }
 
-		username = page.locator("input[name='username']");
-		password = page.locator("input[name='password']");
-		loginBtn = page.locator("button[type='submit']");
-	}
+    private final String txtUsername = "input[name='username']";
 
-	public DashboardPage login(String user, String pass) {
+    private final String txtPassword = "input[name='password']";
 
-	    username.fill(user);
-	    password.fill(pass);
-	    loginBtn.click();
+    private final String btnLogin = "button[type='submit']";
 
-	    page.waitForURL("**/dashboard/**");
+    //private final String dashboard = "h6:has-text('Dashboard')";
 
-	    System.out.println("Current URL : " + page.url());
-	    System.out.println("Page Title  : " + page.title());
+    public void enterUsername(String username) {
+        type(txtUsername, username);
+    }
 
-	    return new DashboardPage(page);
+    public void enterPassword(String password) {
+        type(txtPassword, password);
+    }
 
-	}
+    public void clickLogin() {
+        click(btnLogin);
+        page.waitForLoadState();
+    }
+
+    public void login(String username, String password) {
+
+        enterUsername(username);
+
+        enterPassword(password);
+
+        clickLogin();
+    }
+
+//    public boolean isDashboardDisplayed() {
+//
+//        page.waitForLoadState();
+//
+//        page.locator("h6").first().waitFor();
+//
+//        System.out.println("Current URL : " + page.url());
+//        System.out.println("Heading : " + page.locator("h6").first().textContent());
+//
+//        return page.locator("h6").first().textContent().trim().equals("Dashboard");
+//    }
+    
+    public boolean isDashboardDisplayed() {
+        page.locator("//h6[text()='Dashboard']").waitFor();
+        return page.locator("//h6[text()='Dashboard']").isVisible();
+    }
 }

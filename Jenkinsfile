@@ -27,15 +27,28 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            junit '**/surefire-reports/*.xml'
+ post {
+    always {
 
-            archiveArtifacts artifacts: 'test-results/**/*', fingerprint: true
+        junit '**/surefire-reports/*.xml'
 
-            archiveArtifacts artifacts: 'allure-results/**/*', fingerprint: true
+        archiveArtifacts(
+            artifacts: 'screenshots/**/*',
+            fingerprint: true,
+            allowEmptyArchive: true
+        )
 
-            archiveArtifacts artifacts: 'playwright-report/**/*', fingerprint: true
-        }
+        archiveArtifacts(
+            artifacts: 'traces/**/*',
+            fingerprint: true,
+            allowEmptyArchive: true
+        )
+
+        archiveArtifacts(
+            artifacts: 'videos/**/*',
+            fingerprint: true,
+            allowEmptyArchive: true
+        )
+
     }
 }

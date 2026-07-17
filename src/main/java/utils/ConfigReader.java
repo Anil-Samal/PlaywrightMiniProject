@@ -1,37 +1,49 @@
 package utils;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class ConfigReader {
 
-    private static Properties prop;
+    private final Properties properties;
 
-    static {
+    public ConfigReader() {
 
-        try {
+        properties = new Properties();
 
-            prop = new Properties();
+        try (InputStream input = getClass().getClassLoader()
+                .getResourceAsStream("config.properties")) {
 
-            FileInputStream fis = new FileInputStream(
-                    "src/main/resources/config.properties");
+            if (input == null) {
+                throw new RuntimeException("config.properties file not found");
+            }
 
-            prop.load(fis);
+            properties.load(input);
 
         } catch (IOException e) {
 
-            e.printStackTrace();
-            throw new RuntimeException("Unable to load config.properties");
-
+            throw new RuntimeException("Unable to load config.properties", e);
         }
-
     }
 
-    public static String getProperty(String key) {
-
-        return prop.getProperty(key);
-
+    public String getBrowser() {
+        return properties.getProperty("browser");
     }
 
+    public String getUrl() {
+        return properties.getProperty("url");
+    }
+
+    public String getUsername() {
+        return properties.getProperty("username");
+    }
+
+    public String getPassword() {
+        return properties.getProperty("password");
+    }
+
+    public boolean isHeadless() {
+        return Boolean.parseBoolean(properties.getProperty("headless"));
+    }
 }

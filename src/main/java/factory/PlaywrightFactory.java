@@ -1,13 +1,10 @@
 package factory;
 
-import java.nio.file.Paths;
-
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
-import com.microsoft.playwright.Tracing;
 
 public class PlaywrightFactory {
 
@@ -16,57 +13,72 @@ public class PlaywrightFactory {
     private BrowserContext context;
     private Page page;
 
-    public Page initBrowser(String browserName) {
+    /**
+     * Initializes Playwright and launches the requested browser.
+     *
+     * @param browserName Browser name (chromium, firefox, webkit)
+     * @param headless true = headless, false = headed
+     * @return Playwright Page object
+     */
+    public Page initBrowser(String browserName, boolean headless) {
 
         playwright = Playwright.create();
+
+        BrowserType.LaunchOptions options =
+                new BrowserType.LaunchOptions()
+                        .setHeadless(headless);
 
         switch (browserName.toLowerCase()) {
 
             case "firefox":
-                browser = playwright.firefox()
-                        .launch(new BrowserType.LaunchOptions().setHeadless(false));
+                browser = playwright.firefox().launch(options);
                 break;
 
             case "webkit":
-                browser = playwright.webkit()
-                        .launch(new BrowserType.LaunchOptions().setHeadless(false));
+                browser = playwright.webkit().launch(options);
                 break;
 
+            case "chromium":
             default:
-                browser = playwright.chromium()
-                        .launch(new BrowserType.LaunchOptions().setHeadless(false));
+                browser = playwright.chromium().launch(options);
+                break;
         }
 
-        context = browser.newContext(
-                new Browser.NewContextOptions()
-                        .setRecordVideoDir(Paths.get("videos"))
-        );
-
-        context.tracing().start(
-                new Tracing.StartOptions()
-                        .setScreenshots(true)
-                        .setSnapshots(true)
-                        .setSources(true)
-        );
+        context = browser.newContext();
 
         page = context.newPage();
 
         return page;
     }
 
-    // Add this method at the end of the class
+    public Page getPage() {
+        return page;
+    }
+
+    public BrowserContext getContext() {
+        return context;
+    }
+
+    public Browser getBrowser() {
+        return browser;
+    }
+
+    public Playwright getPlaywright() {
+        return playwright;
+    }
+
+    /**
+     * Close everything in reverse order.
+     */
     public void closeBrowser() {
 
-        if (context != null) {
+        if (context != null)
             context.close();
-        }
 
-        if (browser != null) {
+        if (browser != null)
             browser.close();
-        }
 
-        if (playwright != null) {
+        if (playwright != null)
             playwright.close();
-        }
     }
 }
