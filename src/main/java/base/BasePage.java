@@ -1,8 +1,11 @@
 package base;
 
+import org.apache.logging.log4j.Logger;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.LoggerUtil;
 import utils.WaitUtils;
 
 public class BasePage {
@@ -10,6 +13,8 @@ public class BasePage {
     protected Page page;
 
     protected WaitUtils wait;
+    
+    protected Logger log = LoggerUtil.getLogger(getClass());
 
     public BasePage(Page page) {
         this.page = page;
@@ -24,12 +29,16 @@ public class BasePage {
     	
         wait.waitForVisible(selector);
         
+        log.info("Clicking element: {}", selector);
+        
         locator(selector).click();
     }
 
     protected void type(String selector, String text) {
 
         wait.waitForVisible(selector);
+        
+        log.info("Typing into element: {}", selector);
 
         locator(selector).fill(text);
     }
@@ -41,6 +50,8 @@ public class BasePage {
     protected boolean isVisible(String selector) {
 
         wait.waitForVisible(selector);
+        
+        log.info("Checking visibility: {}", selector);
 
         return locator(selector).isVisible();
     }

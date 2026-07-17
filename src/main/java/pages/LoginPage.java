@@ -33,9 +33,15 @@ public class LoginPage extends BasePage {
 
     public void login(String username, String password) {
 
+        log.info("Entering username");
+
         enterUsername(username);
 
+        log.info("Entering password");
+
         enterPassword(password);
+
+        log.info("Clicking Login button");
 
         clickLogin();
     }

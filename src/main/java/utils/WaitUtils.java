@@ -17,10 +17,12 @@ public class WaitUtils {
      */
     public void waitForVisible(String selector) {
         page.locator(selector).waitFor(
-            new Locator.WaitForOptions()
+            new Locator.WaitForOptions().setTimeout(10000)
                 .setState(WaitForSelectorState.VISIBLE)
         );
     }
+    
+    
 
    
 
