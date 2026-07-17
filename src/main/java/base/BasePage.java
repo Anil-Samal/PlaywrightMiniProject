@@ -3,12 +3,17 @@ package base;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import utils.WaitUtils;
+
 public class BasePage {
 
     protected Page page;
 
+    protected WaitUtils wait;
+
     public BasePage(Page page) {
         this.page = page;
+        this.wait = new WaitUtils(page);
     }
 
     protected Locator locator(String selector) {
@@ -16,10 +21,16 @@ public class BasePage {
     }
 
     protected void click(String selector) {
+    	
+        wait.waitForVisible(selector);
+        
         locator(selector).click();
     }
 
     protected void type(String selector, String text) {
+
+        wait.waitForVisible(selector);
+
         locator(selector).fill(text);
     }
 
@@ -28,6 +39,9 @@ public class BasePage {
     }
 
     protected boolean isVisible(String selector) {
+
+        wait.waitForVisible(selector);
+
         return locator(selector).isVisible();
     }
 

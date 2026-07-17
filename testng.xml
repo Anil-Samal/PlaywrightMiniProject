@@ -4,11 +4,13 @@
   <test thread-count="5" name="Test">
     <classes>
       
+      <class name="tests.ConfigReaderTest"/>
       <class name="tests.LoginTest"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->
 
 <!--// <class name="base.BaseTest"/>
+<class name="tests.BrowserLaunchTest"/>
 <class name="tests.BaseTestVerification"/>
- //     <class name="tests.ConfigReaderTest"/>-->
+ //     -->
