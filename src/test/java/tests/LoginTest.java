@@ -5,6 +5,7 @@ import org.testng.annotations.Test;
 
 import base.BaseTest;
 import pages.LoginPage;
+import utils.ExcelReader;
 import utils.JsonReader;
 
 public class LoginTest extends BaseTest {
@@ -33,5 +34,20 @@ public class LoginTest extends BaseTest {
         );
 
         Assert.assertFalse(loginPage.isDashboardDisplayed());
+    }
+    
+    @Test
+    public void verifySuccessfulLoginUsingExcel() {
+
+        LoginPage loginPage = new LoginPage(page);
+
+        ExcelReader excel = new ExcelReader("LoginData.xlsx");
+
+        String username = excel.getCellData("Login", 1, 0);
+        String password = excel.getCellData("Login", 1, 1);
+
+        loginPage.login(username, password);
+
+        Assert.assertTrue(loginPage.isDashboardDisplayed());
     }
 }

@@ -1,5 +1,6 @@
 package pages;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import base.BasePage;
@@ -15,8 +16,6 @@ public class LoginPage extends BasePage {
     private final String txtPassword = "input[name='password']";
 
     private final String btnLogin = "button[type='submit']";
-
-    //private final String dashboard = "h6:has-text('Dashboard')";
 
     public void enterUsername(String username) {
         type(txtUsername, username);
@@ -45,21 +44,20 @@ public class LoginPage extends BasePage {
 
         clickLogin();
     }
-
-//    public boolean isDashboardDisplayed() {
-//
-//        page.waitForLoadState();
-//
-//        page.locator("h6").first().waitFor();
-//
-//        System.out.println("Current URL : " + page.url());
-//        System.out.println("Heading : " + page.locator("h6").first().textContent());
-//
-//        return page.locator("h6").first().textContent().trim().equals("Dashboard");
-//    }
     
     public boolean isDashboardDisplayed() {
-        page.locator("//h6[text()='Dashboard']").waitFor();
-        return page.locator("//h6[text()='Dashboard']").isVisible();
+
+        try {
+
+            page.locator("//h6[text()='Dashboard']")
+                .waitFor(new Locator.WaitForOptions().setTimeout(5000));
+
+            return true;
+
+        } catch (Exception e) {
+
+            return false;
+
+        }
     }
 }
