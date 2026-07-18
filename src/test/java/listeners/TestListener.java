@@ -33,12 +33,22 @@ public class TestListener implements ITestListener {
         log.error("========================================");
         log.error("Test Failed : {}", result.getMethod().getMethodName());
 
-        String path = ScreenshotUtil.captureScreenshot(
-                DriverManager.getPage(),
-                result.getMethod().getMethodName());
+        if (DriverManager.getPage() != null) {
 
-        log.error("Screenshot saved at : {}", path);
+            String path = ScreenshotUtil.captureScreenshot(
+                    DriverManager.getPage(),
+                    result.getMethod().getMethodName());
+
+            log.error("Screenshot saved at : {}", path);
+
+        } else {
+
+            log.warn("Screenshot skipped because Playwright Page is null.");
+
+        }
+
+        log.error(result.getThrowable());
+
         log.error("========================================");
-
     }
 }
