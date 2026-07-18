@@ -2,10 +2,7 @@ package utils;
 
 import java.io.InputStream;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelReader {
@@ -20,28 +17,41 @@ public class ExcelReader {
                     .getClassLoader()
                     .getResourceAsStream("testdata/" + fileName);
 
-            if (is == null) {
-                throw new RuntimeException("Excel file not found : " + fileName);
-            }
-
             workbook = new XSSFWorkbook(is);
 
         } catch (Exception e) {
 
-            throw new RuntimeException("Unable to load Excel file : " + fileName, e);
+            throw new RuntimeException(e);
 
         }
+
     }
 
-    public String getCellData(String sheetName, int row, int column) {
+    public int getRowCount(String sheetName) {
 
-        Sheet sheet = workbook.getSheet(sheetName);
+        return workbook
+                .getSheet(sheetName)
+                .getLastRowNum();
 
-        Row excelRow = sheet.getRow(row);
+    }
 
-        Cell cell = excelRow.getCell(column);
+    public int getColumnCount(String sheetName) {
 
-        return cell.toString();
+        return workbook
+                .getSheet(sheetName)
+                .getRow(0)
+                .getLastCellNum();
+
+    }
+
+    public String getCellData(String sheetName,int row,int col){
+
+        return workbook
+                .getSheet(sheetName)
+                .getRow(row)
+                .getCell(col)
+                .toString();
+
     }
 
 }

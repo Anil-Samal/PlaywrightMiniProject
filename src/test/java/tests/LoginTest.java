@@ -7,6 +7,7 @@ import base.BaseTest;
 import pages.LoginPage;
 import utils.ExcelReader;
 import utils.JsonReader;
+import utils.TestDataProvider;
 
 public class LoginTest extends BaseTest {
 
@@ -50,4 +51,28 @@ public class LoginTest extends BaseTest {
 
         Assert.assertTrue(loginPage.isDashboardDisplayed());
     }
+    
+    @Test(dataProvider = "loginData",
+    	      dataProviderClass = TestDataProvider.class)
+    	public void verifyLogin(String username,
+    	                        String password,
+    	                        String expected) {
+
+    	    LoginPage loginPage = new LoginPage(page);
+
+    	    loginPage.login(username, password);
+
+    	    if(expected.equalsIgnoreCase("PASS")) {
+
+    	        Assert.assertTrue(loginPage.isDashboardDisplayed(),
+    	                "Dashboard should be displayed for valid login.");
+
+    	    } else {
+
+    	        Assert.assertFalse(loginPage.isDashboardDisplayed(),
+    	                "Dashboard should not be displayed for invalid login.");
+
+    	    }
+
+    	}
 }
