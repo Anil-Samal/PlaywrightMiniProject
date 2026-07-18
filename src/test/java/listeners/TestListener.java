@@ -1,12 +1,10 @@
 package listeners;
 
-import driver.DriverManager;
-
 import org.apache.logging.log4j.Logger;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
-import base.BaseTest;
+import driver.DriverManager;
 import utils.LoggerUtil;
 import utils.ScreenshotUtil;
 

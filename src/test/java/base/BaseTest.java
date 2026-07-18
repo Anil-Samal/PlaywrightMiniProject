@@ -6,16 +6,16 @@ import org.testng.annotations.BeforeMethod;
 
 import com.microsoft.playwright.Page;
 
+import config.ConfigManager;
 import driver.BrowserFactory;
 import driver.DriverManager;
-import utils.ConfigReader;
 import utils.LoggerUtil;
 
 public class BaseTest {
 
     protected Page page;
 
-    protected ConfigReader config;
+    protected ConfigManager configManager;
 
     protected Logger log =
             LoggerUtil.getLogger(getClass());
@@ -23,16 +23,17 @@ public class BaseTest {
     @BeforeMethod
     public void setup() {
 
-        config = new ConfigReader();
+        configManager = new ConfigManager();
 
         BrowserFactory browserFactory =
                 new BrowserFactory();
 
         page = browserFactory.createBrowser(
-                config.getBrowser(),
-                config.isHeadless());
+                configManager.getBrowser(),
+                configManager.isHeadless());
 
-        page.navigate(config.getUrl());
+        page.navigate(configManager.getBaseUrl());
+        
     }
 
     @AfterMethod(alwaysRun = true)
@@ -51,5 +52,9 @@ public class BaseTest {
         }
 
         DriverManager.unload();
+        
+        //configManager.testMethod();
     }
+    
+    
 }

@@ -14,13 +14,13 @@ public class LoginTest extends BaseTest {
         LoginPage loginPage = new LoginPage(page);
 
         loginPage.login(
-                config.getUsername(),
-                config.getPassword());
+                configManager.getUsername(),
+                configManager.getPassword());
 
         Assert.assertTrue(
                 loginPage.isDashboardDisplayed(),
                 "Dashboard is not displayed after login.");
         
-        Assert.assertTrue(false, "Intentional failure");
+        //Assert.assertTrue(false, "Intentional failure");
     }
 }
